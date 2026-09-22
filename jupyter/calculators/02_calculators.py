@@ -213,7 +213,11 @@ from chemaxon.calculations import conformers
 
 mol = import_mol('OC1CC(O)CCC1')
 result = conformers(mol)
-display_result(result)
+
+TOP_N = 5
+top_conformers = sorted(result, key=lambda r: r[1])[:TOP_N]
+print(f'Showing the {len(top_conformers)} lowest-energy conformers out of {len(result)} generated:')
+display_result(top_conformers)
 
 # %%
 from chemaxon.calculations import ConformerOptions, ConformerForceField, EnergyUnit, OptimizationLimit
