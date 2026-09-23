@@ -1,0 +1,59 @@
+name: Example notebooks
+
+# Executes every numbered example notebook against the newest chemaxon release.
+# Outputs are not checked - this only confirms the code still runs, so that an
+# API change (upstream, or introduced by a commit here) can't silently break
+# an example without being noticed.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  run-examples:
+    runs-on: ubuntu-latest
+    env:
+      # Chemaxon's private package index. See README for the secret this reads.
+      PIP_EXTRA_INDEX_URL: ${{ secrets.CHEMAXON_PYPI_INDEX_URL }}
+      CHEMAXON_LICENSE_SERVER: https://license.chemaxon.com
+      CHEMAXON_LICENSE_SERVER_KEY: ${{ secrets.CHEMAXON_LICENSE_SERVER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade chemaxon
+          pip install jupyter nbconvert ipykernel pandas matplotlib
+          python -m ipykernel install --user --name python3
+
+      - name: Execute example notebooks
+        run: |
+          set +e
+          failures=()
+          for notebook in jupyter/*/[0-9][0-9]_*.ipynb; do
+            echo "::group::${notebook}"
+            jupyter nbconvert --to notebook --execute \
+              --output-dir "${RUNNER_TEMP}/executed-notebooks" \
+              --ExecutePreprocessor.kernel_name=python3 \
+              --ExecutePreprocessor.timeout=600 \
+              "${notebook}"
+            if [ $? -ne 0 ]; then
+              failures+=("${notebook}")
+            fi
+            echo "::endgroup::"
+          done
+
+          if [ ${#failures[@]} -ne 0 ]; then
+            echo "The following examples failed to execute against the current chemaxon release:"
+            printf ' - %s\n' "${failures[@]}"
+            exit 1
+          fi
+          echo "All example notebooks executed successfully."

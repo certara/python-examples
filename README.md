@@ -8,6 +8,19 @@ For each notebook (ipynb) file the corresponding py file contain the pure python
 - Chemaxon license key (or license file). See the [documentation](https://docs.chemaxon.com/display/docs/python-api_installation.md#license-installation) for details.
 - [JupyterLab](https://jupyter.org/install) for Jupyter notebook examples.
 
+## Continuous Integration
+
+A [workflow](.github/workflows/example-notebooks.yml) executes every numbered example notebook
+against the newest `chemaxon` release on each push/PR to `main`. It only checks that the code
+runs without error - outputs are not validated. This is meant to catch API changes that break an
+example without the example being updated in the same commit.
+
+The workflow needs two repository secrets:
+
+- `CHEMAXON_PYPI_INDEX_URL` - the authenticated index URL for Chemaxon's private package index
+  (the same URL used in your local pip config to install `chemaxon`).
+- `CHEMAXON_LICENSE_SERVER_KEY` - a license key valid for the Python API.
+
 ## Note
 
 If you have any question, suggestion please feel free to contact us via
