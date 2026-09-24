@@ -16,8 +16,6 @@ jobs:
   run-examples:
     runs-on: ubuntu-latest
     env:
-      # Chemaxon's private package index. See README for the secret this reads.
-      PIP_EXTRA_INDEX_URL: ${{ secrets.CHEMAXON_PYPI_INDEX_URL }}
       CHEMAXON_LICENSE_SERVER: https://license.chemaxon.com
       CHEMAXON_LICENSE_SERVER_KEY: ${{ secrets.CHEMAXON_LICENSE_SERVER_KEY }}
     steps:

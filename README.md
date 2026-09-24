@@ -15,10 +15,8 @@ against the newest `chemaxon` release on each push/PR to `main`. It only checks 
 runs without error - outputs are not validated. This is meant to catch API changes that break an
 example without the example being updated in the same commit.
 
-The workflow needs two repository secrets:
+The workflow needs one repository secret:
 
-- `CHEMAXON_PYPI_INDEX_URL` - the authenticated index URL for Chemaxon's private package index
-  (the same URL used in your local pip config to install `chemaxon`).
 - `CHEMAXON_LICENSE_SERVER_KEY` - a license key valid for the Python API.
 
 ## Note
